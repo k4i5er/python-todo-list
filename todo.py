@@ -30,35 +30,105 @@
 #   * Status (Completado/Pendiente)
 # - Número de elemento (**listas ordenadas)
 
-tareasOrdenadas = []
-tareasDesordenadas = []
+# listasTareas = 
+# [ [título de la lista, [tarea1], [tarea2], [tareaN] ], [título de la lista 2, [tarea1], [tareaN] ] ]
+# [
+#   [
+#     título de la lista,
+#     tipoLista = 'o', --> LISTA ORDENADA
+#     [
+#       nombre de la tarea,
+#       status
+#     ],
+#     [
+#       nombre de la tarea2,
+#       status
+#     ], ...
+#   ],
+#   [
+#     título de la lista2,
+#     tipoLista = 'd', --> LISTA DESORDENADA
+#     [
+#       nombre de la tarea2,
+#       status
+#     ],
+#     [
+#       nombre de la tarea2,
+#       status
+#     ], ...
+#   ],
+# ]
+# 
+# Título de la lista
+# --- Tareas ---
+# 1. Tarea 1
+#   Status
+# 2. Tarea 2
+#   Status
+# ...
+#
+# Título de la lista
+# --- Tareas ---
+# - Tarea 1
+#   Status: 
+# - Tarea 2
+#   Status
+# ...
+
+
+# tareasOrdenadas = []
+# tareasDesordenadas = []
+
+listasTareas = []
 
 def crearLista():
-  opc = input('Qué tipo de lista deseas crear? (O = Ordenada, D = Desordenada): ')
-  if opc == 'o' or opc == 'O':
-    tareas = tareasOrdenadas
-  elif opc == 'd' or opc == 'D':
-    tareas = tareasDesordenadas
+  tipoLista = ''
+  lista = []
+  while True:
+    opc = input('Qué tipo de lista deseas crear? (O = Ordenada, D = Desordenada): ')
+    if opc == 'o' or opc == 'O' or opc == 'd' or opc == 'D':
+      tipoLista = opc
+      break
+    else:
+      print('Escribe O para una lista ordenada o D para una lista desordenada...')
+   
   titulo = input('Título de la lista: ')
-  tareas.append(titulo)
-
-# Desord [titulo, [ [tarea, status], [tarea,status] ] ]
-# Ord [titulo, [[tarea, status], [tarea, status]] ]
+  lista.append(titulo)
+  lista.append(tipoLista)
 
   while True:
     tarea = input('Tarea a agregar: ')
     status = 'PENDIENTE'
-    tareas.append([tarea, status])
+    lista.append([tarea, status])
     opc = input('Desea agregar otra tarea? (s/n): ')
     if opc == 'n' or opc == 'N':
       break
+  listasTareas.append(lista)
+
   return
 
-# def mostrarLista():
+def mostrarLista():
+  n = 1
+  for lista in listasTareas:
+    print(str(n)+'.',lista[0])
+    n +=1
+  opc = int(input('Elige el número de lista que deseas ver: '))
+  lista = listasTareas[opc-1]
+  tipoLista = lista[1]
+  vineta = ''
+  if tipoLista == 'o':
+    vineta = 1
+  else:
+    vineta = '-'
+  for elemento in lista:
+    
+
+
 
 
 # def cambiaStatus():
 
 crearLista()
-print (tareasDesordenadas)
-print (tareasOrdenadas)
+crearLista()
+# print (listasTareas)
+mostrarLista()
