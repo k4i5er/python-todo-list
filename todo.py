@@ -108,27 +108,49 @@ def crearLista():
   return
 
 def mostrarLista():
-  n = 1
-  for lista in listasTareas:
-    print(str(n)+'.',lista[0])
-    n +=1
-  opc = int(input('Elige el número de lista que deseas ver: '))
-  lista = listasTareas[opc-1]
-  tipoLista = lista[1]
+  while True:
+    n = 1
+    for lista in listasTareas:
+      print(str(n)+'.',lista[0])
+      n +=1
+    opc = int(input('Elige el número de lista que deseas ver: '))
+    lista = listasTareas[opc-1]
+    tipoLista = lista[1]
+    print(lista[0]) # Imprimo el título de la lista
+    print('--- TAREAS ---')
+    mostrarTareas(lista)
+    opc = input('Deseas ver otra lista?(s/n): ')
+    if opc == 'n' or opc == 'N':
+      break
+  return
+
+def mostrarTareas(lista):
   vineta = ''
-  if tipoLista == 'o':
+  print('Tipo Lista:',lista[1]) # Imprimo el título de la lista
+  
+  if lista[1] == 'o' or 'O':
     vineta = 1
   else:
     vineta = '-'
-  for elemento in lista:
-    
+  for elemento in lista[2:]:
+    print (str(vineta)+'.',elemento[0])
+    print('\t',elemento[1])
+    if type(vineta) == int:
+      vineta += 1
+  return
 
+def cambiaStatus():
+  mostrarLista()
+  i = int(input('A qué lista deseas hacerle cambios?'))
+  lista = listasTareas[i-1]
+  mostrarTareas(lista)
+  j = int(input('A qué tarea deseas cambiar el status?'))
+  lista[j+1][1] = input('Escribe el nuevo status para la tarea: ')
+  mostrarTareas(lista)
 
-
-
-# def cambiaStatus():
 
 crearLista()
-crearLista()
+# crearLista()
 # print (listasTareas)
-mostrarLista()
+# mostrarLista()
+cambiaStatus()
