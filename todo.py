@@ -7,6 +7,7 @@
 # - Permitir modificar los elementos de la lista
 # - Permitir eliminar cualquier elemento de la lista
 # - Status de elementos (tareas terminadas o pendientes)
+# - Eliminar una lista completa ===> TAREA
 #
 # Ejemplo de lista numerada:
 # Receta de café
@@ -75,9 +76,24 @@
 #   Status
 # ...
 
+# ---- Creador de listas de tareas v.1.0 ----
+# 1) Crear una lista
+# 2) Modificar una lista
+# 3) Eliminar una lista
 
-# tareasOrdenadas = []
-# tareasDesordenadas = []
+# Para la opción 1:
+# ---- Crear una lista ----
+# ¿Qué tipo de lista deseas crear? 
+# ...
+
+# Para la opción 2:
+# ---- Modificar lista ----
+# 1) Agregar una nueva tarea a una lista
+# 2) Cambiar el status de una tarea
+# 3) Cambiar el nombre de una tarea
+# 4) Eliminar una tarea
+# 5) Regresar al menú principal
+
 
 listasTareas = []
 
@@ -108,27 +124,16 @@ def crearLista():
   return
 
 def mostrarLista():
-  while True:
-    n = 1
-    for lista in listasTareas:
-      print(str(n)+'.',lista[0])
-      n +=1
-    opc = int(input('Elige el número de lista que deseas ver: '))
-    lista = listasTareas[opc-1]
-    tipoLista = lista[1]
-    print(lista[0]) # Imprimo el título de la lista
-    print('--- TAREAS ---')
-    mostrarTareas(lista)
-    opc = input('Deseas ver otra lista?(s/n): ')
-    if opc == 'n' or opc == 'N':
-      break
+  n = 1
+  print('=== Listas de tareas ===')
+  for lista in listasTareas:
+    print(str(n)+'.',lista[0])
+    n +=1
   return
 
 def mostrarTareas(lista):
-  vineta = ''
-  print('Tipo Lista:',lista[1]) # Imprimo el título de la lista
-  
-  if lista[1] == 'o' or 'O':
+  vineta = '' 
+  if lista[1] == 'o' or lista[1] == 'O':
     vineta = 1
   else:
     vineta = '-'
@@ -148,9 +153,25 @@ def cambiaStatus():
   lista[j+1][1] = input('Escribe el nuevo status para la tarea: ')
   mostrarTareas(lista)
 
+def agregaTarea():
+  mostrarLista()
+  i = int(input('Elige una lista para agregar un elemento: '))
+  lista = listasTareas[i-1]
+  mostrarTareas(lista)
+  tarea = input('Escribe la tarea a agregar: ')
+  status = 'PENDIENTE'
+  posicion = int(input('En qué posición deseas agregar la nueva tarea?'))
+  lista.insert(posicion+1, [tarea, status])
+  mostrarTareas(lista)
+  return
+
+def modificaTarea():
+  
 
 crearLista()
 # crearLista()
 # print (listasTareas)
 # mostrarLista()
 cambiaStatus()
+# agregaTarea()
+modificaTarea()
