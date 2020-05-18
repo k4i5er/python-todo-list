@@ -30,69 +30,21 @@
 #   * Nombre
 #   * Status (Completado/Pendiente)
 # - Número de elemento (**listas ordenadas)
-
-# listasTareas = 
-# [ [título de la lista, [tarea1], [tarea2], [tareaN] ], [título de la lista 2, [tarea1], [tareaN] ] ]
-# [
-#   [
-#     título de la lista,
-#     tipoLista = 'o', --> LISTA ORDENADA
-#     [
-#       nombre de la tarea,
-#       status
-#     ],
-#     [
-#       nombre de la tarea2,
-#       status
-#     ], ...
-#   ],
-#   [
-#     título de la lista2,
-#     tipoLista = 'd', --> LISTA DESORDENADA
-#     [
-#       nombre de la tarea2,
-#       status
-#     ],
-#     [
-#       nombre de la tarea2,
-#       status
-#     ], ...
-#   ],
-# ]
-# 
-# Título de la lista
-# --- Tareas ---
-# 1. Tarea 1
-#   Status
-# 2. Tarea 2
-#   Status
-# ...
 #
-# Título de la lista
-# --- Tareas ---
-# - Tarea 1
-#   Status: 
-# - Tarea 2
-#   Status
-# ...
+#Tipos de pruebas en código:
+# Pruebas Alfa --> Son las primeras pruebas que hace el programador
+# Pruebas Beta --> Son las que se realizan con usuarios reales del sistema
+# TODO (Tareas pendientes de diseño):
+# - Agregar tareas entre el primer y último valor de la lista
+# - Permitir solamente seleccionar los valores correspondientes al número de listas disponibles
+# - SubMenú 'Agregar Nueva Tarea', 'Cambiar Status', 'Cambiar Nombre', 'Eliminar Tarea': 
+#   * No pedir la posición de la tarea sólo cuando sea la primera tarea a agregar
+# - SubMenú 'Cambiar Status', 'Cambiar nombre', 'Eliminar Tarea': 
+#   * Permitir solamente seleccionar los valores correspondientes al número de tareas disponibles
+# - Fecha/Hora de notas
 
-# ---- Creador de listas de tareas v.1.0 ----
-# 1) Crear una lista
-# 2) Modificar una lista
-# 3) Eliminar una lista
-
-# Para la opción 1:
-# ---- Crear una lista ----
-# ¿Qué tipo de lista deseas crear? 
-# ...
-
-# Para la opción 2:
-# ---- Modificar lista ----
-# 1) Agregar una nueva tarea a una lista
-# 2) Cambiar el status de una tarea
-# 3) Cambiar el nombre de una tarea
-# 4) Eliminar una tarea
-# 5) Regresar al menú principal
+import sys
+import datetime
 
 listasTareas = []
 
@@ -113,12 +65,17 @@ def menuPrincipal():
       elif opc == 3: eliminaLista()
       elif opc == 4: 
         print('Sayonara! )=')
-        exit(0) # <----- Finaliza el programa
+        sys.exit() # <----- Finaliza el programa
       else: print('Opción no válida... selecciona 1, 2, 3 o 4 \=< ')
     except ValueError:
       print('¡Escribe sólo números enteros! \=< ')
     except KeyboardInterrupt: # <---- No permitir que el programa finalice con ^C
-      print('Para salir del programa presiona 4...')
+      print('\nPara salir del programa presiona 4...')
+    except SystemExit:
+      return 0 # <--- Buena práctica para finalizar un programa
+    except:
+      print(f'Ha sucedido un error inesperado: {sys.exc_info()[0]}')
+      return
   return
 
 def menuModificar():
@@ -291,4 +248,15 @@ def eliminaLista():
   menuPrincipal()
   return
 
-menuPrincipal()
+# menuPrincipal()
+
+date = datetime.datetime.now()
+print(date)
+if date.month < 10:
+  print(f'Fecha actual: {date.day}/0{date.month}/{date.year}')
+elif date.day < 10:
+  print(f'Fecha actual: 0{date.day}/{date.month}/{date.year}')
+elif date.day < 10 and date.month < 10:
+  print(f'Fecha actual: 0{date.day}/0{date.month}/{date.year}')
+else:
+  print(f'Fecha actual: {date.day}/{date.month}/{date.year}')
