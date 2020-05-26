@@ -78,9 +78,6 @@ def getHour():
   else:
     return f'{hour.hour}:{hour.minute}:{hour.second}'
 
-print(getHour())
-  
-
 def menuPrincipal():
   while True:
     try:
@@ -143,7 +140,6 @@ def crearLista():
   while True:
     try:
       opc = input('¿Qué tipo de lista deseas crear? (O = Ordenada, D = Desordenada): ')
-      # transformar de mayúsculas a minúsculas
       opc = opc.lower()
       if opc == 'o' or opc == 'd':
         tipoLista = opc
@@ -153,9 +149,7 @@ def crearLista():
     except KeyboardInterrupt:
       print('\n*** ERROR: El proceso no puede ser cancelado ***')
   titulo = input('Título de la lista: ')
-  lista.append(titulo)
-  lista.append(tipoLista)
-  lista.append([getDate(), getHour()])
+  lista.append([titulo, tipoLista, [getDate(), getHour()], 'N/A'])
   while True:
     try:
       tarea = input('Tarea a agregar: ')
@@ -176,7 +170,6 @@ def crearLista():
     except KeyboardInterrupt:
       print('\n*** ERROR: El proceso no puede ser cancelado ***')
   listasTareas.append(lista)
-  # menuPrincipal()
   return
 
 def mostrarLista():
@@ -184,10 +177,10 @@ def mostrarLista():
     n = 1
     print('=== Listas de tareas ===')
     for lista in listasTareas:
-      # Cuando no se haya modificado la lista, mostrar la fecha/hora de creación,
-      # cuando la lista ya haya sido modificada, mostrar la fecha/hora de modificación
-      print(f'{n}. {lista[0]} {lista[2][0]} {lista[2][1]}') # <--- formatted string o cadena formateada 
-      
+      if lista[0][3] == 'N/A':
+        print(f'{n}. {lista[0][0]} {lista[0][2][0]} {lista[0][2][1]}') # muestra fecha y hora de creación
+      else:
+        print(f'{n}. {lista[0][0]} {lista[0][3][0]} {lista[0][3][1]}') # muestra fecha y hora de modificación
       n +=1
     return True
   else: 
@@ -195,14 +188,14 @@ def mostrarLista():
     return False
 
 def mostrarTareas(lista):
-  if len(lista[2:]) > 0:
+  if len(lista[1:]) > 0:
     vineta = '' 
-    print(f'=== Tareas de la lista "{lista[0]}" ===')
-    if lista[1] == 'o' or lista[1] == 'O':
+    print(f'=== Tareas de la lista "{lista[0][0]}" ===')
+    if lista[0][1] == 'o' or lista[0][1] == 'O':
       vineta = 1
     else:
       vineta = '-'
-    for elemento in lista[2:]:
+    for elemento in lista[1:]:
       if type(vineta) == int:
         print (f'{vineta}. {elemento[0]}')
         vineta += 1
@@ -211,7 +204,7 @@ def mostrarTareas(lista):
       print(f'\t{elemento[1]}')
     return True
   else:
-    print(f'\n¡La lista "{lista[0]}" no tiene tareas! )\'=\n')
+    print(f'\n¡La lista "{lista[0][0]}" no tiene tareas! )\'=\n')
     return False
 
 def cambiaStatus():
@@ -233,26 +226,23 @@ def cambiaStatus():
       i = 1
     lista = listasTareas[i-1]
     while mostrarTareas(lista):
-      if len(lista[2:]) > 1:
+      if len(lista[1:]) > 1:
         while True:
           try:
             j = int(input('¿A qué tarea deseas cambiar el status? '))
-            if j >= 1 and j <= len(lista[2:]):
+            if j >= 1 and j <= len(lista[1:]):
               break
             else:
-              print(f'*** ERROR: Escribe un número entre 1 y {len(lista[2:])}')
+              print(f'*** ERROR: Escribe un número entre 1 y {len(lista[1:])}')
           except ValueError:
             print('*** ERROR: Escribe sólo números enteros ***')
           except KeyboardInterrupt:
             print('\n*** ERROR: El proceso no puede ser cancelado ***')
       else:
         j = 1
-      lista[j+1][1] = input('Escribe el nuevo status para la tarea: ')
-      # Cuando no exista fecha y hora de modificación, agregarla,
-      # cuando ya exista fecha y hora de modificación, actualizarla
-      listasTareas[i-1].insert(3,[getDate(), getHour()])
-      
-      tareas = mostrarTareas()
+      lista[j][1] = input('Escribe el nuevo status para la tarea: ')
+      listasTareas[i-1][0][3] = [getDate(), getHour()] # actualiza fecha y hora de modificación
+      tareas = mostrarTareas(lista)
       if tareas:
         while True:
           try:
@@ -264,13 +254,8 @@ def cambiaStatus():
               print('*** ERROR: Escribe sólo \'s\' o \'n\' ***')
           except KeyboardInterrupt:
             print('*** ERROR: El proceso no puede ser cancelado ***')
-      # --- Refactorizable ---
-      # else:
-      #   break
-      elif not tareas or opc == 'n':
-        break
-      # ----------------------
-  # menuModificar()
+        if opc == 'n':
+          break
   return
 
 def agregaTarea():
@@ -293,14 +278,14 @@ def agregaTarea():
     lista = listasTareas[i-1]
     mostrarTareas(lista)
     while True:
-      if len(lista[2:]) > 1:
+      if len(lista[1:]) > 1:
         while True:
           try:
             posicion = int(input('¿En qué posición de la lista deseas agregar la nueva tarea? '))
-            if posicion >= 1 and posicion <= len(lista[2:])+1:
+            if posicion >= 1 and posicion <= len(lista[1:])+1:
               break
             else:
-              print(f'ERROR: Escribe un número entre 1 y {len(lista[2:])+1}')
+              print(f'ERROR: Escribe un número entre 1 y {len(lista[1:])+1}')
           except ValueError:
             print('*** ERROR: Escribe sólo números enteros... ***')
           except KeyboardInterrupt:
@@ -309,7 +294,8 @@ def agregaTarea():
         posicion = 1
       tarea = input('Escribe la tarea a agregar: ')
       status = 'PENDIENTE'
-      lista.insert(posicion+1, [tarea, status])
+      lista.insert(posicion, [tarea, status])
+      listasTareas[i-1][0][3] = [getDate(), getHour()] # actualiza fecha y hora de modificación
       mostrarTareas(lista)
       while True:
         try:
@@ -323,7 +309,6 @@ def agregaTarea():
           print('\n*** ERROR: El proceso no puede ser cancelado ***')
       if opc == 'n':
         break
-  # menuModificar()
   return
 
 def modificaTarea():
@@ -345,21 +330,22 @@ def modificaTarea():
       i = 1
     lista = listasTareas[i-1]
     while mostrarTareas(lista):
-      if len(lista[2:]) > 1:
+      if len(lista[1:]) > 1:
         while True:
           try:
             j = int(input('Escribe el número de tarea que deseas modificar: '))
-            if j >= 1 and j <= len(lista[2:]):
+            if j >= 1 and j <= len(lista[1:]):
               break
             else:
-              print(f'*** ERROR: Escribe un número entre 1 y {len(lista[2:])} ***')
+              print(f'*** ERROR: Escribe un número entre 1 y {len(lista[1:])} ***')
           except ValueError:
             print('*** ERROR: Escribe sólo números enteros ***')
           except KeyboardInterrupt:
             print('\n*** ERROR: El proceso no puede ser cancelado ***')
       else:
         j = 1
-      lista[j+1][0] = input('Escribe el nuevo nombre para la tarea: ')
+      lista[j][0] = input('Escribe el nuevo nombre para la tarea: ')
+      listasTareas[i-1][0][3] = [getDate(), getHour()] # actualiza fecha y hora de modificación
       mostrarTareas(lista)
       while True:
         try:
@@ -373,7 +359,6 @@ def modificaTarea():
           print('\n*** ERROR: El proceso no puede ser cancelado ***')
       if opc == 'n':
         break
-  # menuModificar()
   return
 
 def eliminaTarea():
@@ -395,21 +380,22 @@ def eliminaTarea():
       i = 1
     lista = listasTareas[i-1]
     while mostrarTareas(lista):
-      if len(lista[2:]) > 1:
+      if len(lista[1:]) > 1:
         while True:
           try:
             j = int(input('Elige el número de la tarea a eliminar: '))
-            if j >= 1 and j <= len(lista[2:]):
+            if j >= 1 and j <= len(lista[1:]):
               break
             else:
-              print(f'*** ERROR: Escribe un número entre 1 y {len(lista[2:])} ***')
+              print(f'*** ERROR: Escribe un número entre 1 y {len(lista[1:])} ***')
           except ValueError:
             print('*** ERROR: Escribe sólo números enteros ***')
           except KeyboardInterrupt:
             print('\n*** ERROR: El proceso no puede ser cancelado ***')
       else:
         j = 1
-      lista.pop(j+1)
+      lista.pop(j)
+      listasTareas[i-1][0][3] = [getDate(), getHour()] # actualiza fecha y hora de modificación
       tareas = mostrarTareas(lista)
       if tareas:
         while True:
@@ -419,11 +405,8 @@ def eliminaTarea():
             break
           else:
             print('*** ERROR: Escribe sólo \'s\' o \'n\' ***')
-      # --- Refactorizable ---
-      elif not tareas or opc == 'n':
-        break
-      # ----------------------
-  # menuModificar()
+        if opc == 'n':
+          break
   return
 
 def eliminaLista():
@@ -459,22 +442,6 @@ def eliminaLista():
           print('\n*** ERROR: El proceso no puede ser cancelado ***')
       if opc == 'n':
         break
-  # menuPrincipal()
   return
 
-# menuPrincipal()
-
-# dateFormat = '%d/%m/%Y'
-# date = datetime.datetime.strptime('02/01/2020', dateFormat)
-# date = datetime.datetime.now()
-# print(date)
-# if date.day < 10 and date.month < 10:
-#   print(f'Fecha actual: 0{date.day}/0{date.month}/{date.year}')
-# elif date.month < 10:
-#   print(f'Fecha actual: {date.day}/0{date.month}/{date.year}')
-# elif date.day < 10:
-#   print(f'Fecha actual: 0{date.day}/{date.month}/{date.year}')
-# else:
-#   print(f'Fecha actual: {date.day}/{date.month}/{date.year}')
-
-# print(f'Hora: {date.hour}:{date.minute}:{date.second}')
+menuPrincipal()
